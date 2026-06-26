@@ -1,6 +1,3 @@
-bash
-
-cat > /home/claude/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -82,26 +79,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
 .btn-share{background:#F5F5F5;color:#1a1a1a;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;}
 .btn-bell{background:#F5F5F5;color:#1a1a1a;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;}
 .btn-bell.on{background:#E1F5EE;color:#085041;}
-
-/* 地図タブ専用カード */
-.map-card{
-  background:#fff;
-  border-radius:14px;
-  border:0.5px solid #e0e0e0;
-  overflow:hidden;
-  display:flex;
-  cursor:pointer;
-  transition:transform 0.1s;
-  text-decoration:none;
-  color:inherit;
-}
-.map-card:active{transform:scale(0.98);}
-.map-card-accent{width:4px;flex-shrink:0;}
-.map-card-body{padding:12px 14px;flex:1;min-width:0;}
-.map-card-name{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.3;word-break:break-all;}
-.map-card-place{font-size:12px;color:#666;margin-bottom:6px;display:flex;align-items:flex-start;gap:4px;}
-.map-card-tags{display:flex;gap:5px;flex-wrap:wrap;}
-.map-card-arrow{display:flex;align-items:center;padding:0 14px;color:#1D9E75;flex-shrink:0;font-size:22px;}
 </style>
 </head>
 <body>
@@ -156,30 +133,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
 <!-- 地図ビュー -->
 <div id="view-map" style="display:none;position:fixed;inset:0;background:#F5F5F5;z-index:50;flex-direction:column;">
   <div style="background:#fff;padding:14px 16px;border-bottom:0.5px solid #e0e0e0;display:flex;align-items:center;gap:12px;flex-shrink:0;">
-    <button onclick="switchTab('home')" style="background:none;border:none;cursor:pointer;font-size:24px;color:#1a1a1a;padding:0;line-height:1;">
-      <i class="ti ti-arrow-left"></i>
-    </button>
+    <button onclick="switchTab('home')" style="background:none;border:none;cursor:pointer;font-size:24px;color:#1a1a1a;padding:0;"><i class="ti ti-arrow-left"></i></button>
     <span style="font-size:17px;font-weight:600;">地図で見る</span>
   </div>
-  <div style="padding:10px 16px;font-size:12px;color:#666;background:#fff;border-bottom:0.5px solid #e0e0e0;flex-shrink:0;">
-    近日開催のイベント一覧 → タップでGoogleマップが開きます
-  </div>
-  <div id="map-event-list" style="overflow-y:auto;flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;padding-bottom:100px;"></div>
+  <div style="padding:10px 12px;font-size:12px;color:#666;background:#fff;border-bottom:0.5px solid #e0e0e0;flex-shrink:0;">近日開催のイベント一覧 → タップでGoogleマップが開きます</div>
+  <div id="map-event-list" style="overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;padding-bottom:100px;"></div>
 </div>
 
 <!-- お気に入りビュー -->
 <div id="view-fav" style="display:none;position:fixed;inset:0;background:#F5F5F5;z-index:50;flex-direction:column;">
   <div style="background:#fff;padding:14px 16px;border-bottom:0.5px solid #e0e0e0;display:flex;align-items:center;gap:12px;flex-shrink:0;">
-    <button onclick="switchTab('home')" style="background:none;border:none;cursor:pointer;font-size:24px;color:#1a1a1a;padding:0;line-height:1;"><i class="ti ti-arrow-left"></i></button>
+    <button onclick="switchTab('home')" style="background:none;border:none;cursor:pointer;font-size:24px;color:#1a1a1a;padding:0;"><i class="ti ti-arrow-left"></i></button>
     <span style="font-size:17px;font-weight:600;">お気に入り</span>
   </div>
-  <div id="fav-cards" style="padding:12px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;padding-bottom:100px;"></div>
+  <div id="fav-cards" style="padding:12px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding-bottom:100px;"></div>
 </div>
 
 <!-- 通知ビュー -->
 <div id="view-bell" style="display:none;position:fixed;inset:0;background:#F5F5F5;z-index:50;flex-direction:column;">
   <div style="background:#fff;padding:14px 16px;border-bottom:0.5px solid #e0e0e0;display:flex;align-items:center;gap:12px;flex-shrink:0;">
-    <button onclick="switchTab('home')" style="background:none;border:none;cursor:pointer;font-size:24px;color:#1a1a1a;padding:0;line-height:1;"><i class="ti ti-arrow-left"></i></button>
+    <button onclick="switchTab('home')" style="background:none;border:none;cursor:pointer;font-size:24px;color:#1a1a1a;padding:0;"><i class="ti ti-arrow-left"></i></button>
     <span style="font-size:17px;font-weight:600;">通知設定</span>
   </div>
   <div style="padding:40px 20px;text-align:center;color:#999;font-size:14px;line-height:1.8;">
@@ -187,8 +160,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
     イベントの通知機能は<br>近日公開予定です
   </div>
 </div>
-
-<!-- モーダル -->
 <div class="modal-bg" id="modal" onclick="closeModalBg(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -220,7 +191,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
     </div>
   </div>
 </div>
-
 <script>
 const MONTHS=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
 const DAYS=["日","月","火","水","木","金","土"];
@@ -280,6 +250,8 @@ const DB={
     {name:"渋谷音楽フェス",date:"2026-09-13",place:"渋谷各所",dist:"0.2km",cat:"音楽",free:false,color:"#0F6E56"},
     {name:"代々木公園マルシェ",date:"2026-06-14",place:"代々木公園",dist:"1.5km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
     {name:"渋谷アートフェスティバル",date:"2026-08-22",place:"渋谷ヒカリエ周辺",dist:"0.4km",cat:"映画・アート",free:true,color:"#BA7517"},
+    {name:"渋谷ハロウィンフェス",date:"2026-10-31",place:"渋谷センター街周辺",dist:"0.3km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"渋谷音楽フェス",date:"2026-09-13",place:"渋谷各所",dist:"0.2km",cat:"音楽",free:false,color:"#0F6E56"},
   ],
   "自由が丘":[
     {name:"自由が丘スイーツフェスタ",date:"2026-09-19",place:"自由が丘駅前",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
@@ -463,9 +435,11 @@ document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key=
 let favorites = JSON.parse(localStorage.getItem('machi-favorites')||'[]');
 
 function getFavKey(ev){ return ev.name+'_'+ev.date; }
+
 function isFav(ev){ return favorites.some(f=>f.name===ev.name&&f.date===ev.date); }
 
 function toggleFav(ev, btn){
+  const key=getFavKey(ev);
   if(isFav(ev)){
     favorites=favorites.filter(f=>!(f.name===ev.name&&f.date===ev.date));
     btn.classList.remove('on');
@@ -486,7 +460,9 @@ function renderFav(){
   const active=favorites.filter(ev=>new Date(ev.date)>=today).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const past=favorites.filter(ev=>new Date(ev.date)<today);
   let html='';
-  if(active.length) html+=active.map(ev=>favCardHTML(ev)).join('');
+  if(active.length){
+    html+=active.map(ev=>favCardHTML(ev)).join('');
+  }
   if(past.length){
     html+=`<div style="font-size:12px;color:#999;padding:8px 4px;margin-top:4px;">終了したイベント</div>`;
     html+=past.map(ev=>favCardHTML(ev,true)).join('');
@@ -520,7 +496,7 @@ function favCardHTML(ev, ended=false){
   </div>`;
 }
 
-function removeFavAndRefresh(ev){
+function removeFavAndRefresh(ev, btn){
   favorites=favorites.filter(f=>!(f.name===ev.name&&f.date===ev.date));
   localStorage.setItem('machi-favorites',JSON.stringify(favorites));
   renderFav();
@@ -528,72 +504,63 @@ function removeFavAndRefresh(ev){
 
 // 地図タブ
 function renderMapTab(){
-  const container = document.getElementById('map-event-list');
-  
-  // 全エリアのイベントを収集・重複排除・日付順ソート
-  const allEvents = Object.values(DB).flat().filter(e => {
-    const d = new Date(e.date); d.setHours(0,0,0,0);
-    return d >= TODAY;
-  }).sort((a,b) => new Date(a.date) - new Date(b.date));
-
-  const seen = new Set();
-  const unique = allEvents.filter(e => {
-    const k = e.name + e.date;
-    if(seen.has(k)) return false;
+  const allEvents=Object.values(DB).flat().filter(e=>{
+    const d=new Date(e.date); d.setHours(0,0,0,0);
+    return d>=TODAY;
+  }).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const seen=new Set();
+  const unique=allEvents.filter(e=>{
+    const k=e.name+e.date;
+    if(seen.has(k))return false;
     seen.add(k);
     return true;
   });
-
-  if(!unique.length){
-    container.innerHTML = '<div style="text-align:center;padding:48px 20px;color:#999;font-size:14px;">近日開催のイベントはありません</div>';
-    return;
-  }
-
-  container.innerHTML = unique.map(ev => {
-    const dt = new Date(ev.date);
-    const q = encodeURIComponent(ev.place + ' ' + ev.name);
-    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${q}`;
-    const dateLabel = `${MONTHS[dt.getMonth()]}${dt.getDate()}日（${DAYS[dt.getDay()]}）`;
-    return `
-      <div class="map-card" onclick="window.open('${mapUrl}','_blank')">
-        <div class="map-card-accent" style="background:${ev.color};"></div>
-        <div class="map-card-body">
-          <div class="map-card-name">${ev.name}</div>
-          <div class="map-card-place">📍 ${ev.place}</div>
-          <div class="map-card-tags">
-            <span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#FEF3E2;color:#633806;">${dateLabel}</span>
-            ${ev.free ? '<span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#E1F5EE;color:#085041;">無料</span>' : ''}
-            <span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#F5F5F5;color:#666;">${ev.cat}</span>
-          </div>
+  const container=document.getElementById('map-event-list');
+  container.innerHTML=unique.map(ev=>{
+    const dt=new Date(ev.date);
+    const q=encodeURIComponent(ev.place+' '+ev.name);
+    return `<div style="background:#fff;border-radius:14px;border:0.5px solid #e0e0e0;overflow:hidden;display:flex;cursor:pointer;" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${q}','_blank')">
+      <div style="width:4px;background:${ev.color};flex-shrink:0;"></div>
+      <div style="padding:12px;flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:3px;">${ev.name}</div>
+        <div style="font-size:12px;color:#666;display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+          <i class="ti ti-map-pin" style="font-size:12px;color:#1D9E75;"></i>${ev.place}
         </div>
-        <div style="display:flex;align-items:center;padding:0 16px;color:#1D9E75;flex-shrink:0;font-size:13px;font-weight:600;">地図</div>
-      </div>`;
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+          <span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#FAEEDA;color:#633806;">${MONTHS[dt.getMonth()]}${dt.getDate()}日</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#E1F5EE;color:#085041;font-weight:500;">${ev.dist}</span>
+          ${ev.free?'<span style="font-size:11px;padding:2px 8px;border-radius:99px;background:#F5F5F5;color:#666;">無料</span>':''}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 14px;color:#1D9E75;flex-shrink:0;">
+        <i class="ti ti-map-2" style="font-size:22px;"></i>
+      </div>
+    </div>`;
   }).join('');
 }
 
 // タブ切り替え
 function switchTab(tab){
   ['home','map','bell','fav'].forEach(t=>{
-    const el = document.getElementById('tab-'+t);
-    if(el) el.classList.remove('active');
+    const tabEl=document.getElementById('tab-'+t);
+    if(tabEl) tabEl.classList.remove('active');
   });
   document.getElementById('tab-'+tab).classList.add('active');
-
-  document.getElementById('view-home').style.display = 'none';
-  document.getElementById('view-map').style.display = 'none';
-  document.getElementById('view-fav').style.display = 'none';
-  document.getElementById('view-bell').style.display = 'none';
-
-  if(tab === 'home'){
-    document.getElementById('view-home').style.display = 'block';
-  } else if(tab === 'map'){
-    document.getElementById('view-map').style.display = 'flex';
+  // 全ビューを非表示
+  document.getElementById('view-home').style.display='none';
+  document.getElementById('view-map').style.display='none';
+  document.getElementById('view-fav').style.display='none';
+  document.getElementById('view-bell').style.display='none';
+  if(tab==='home'){
+    document.getElementById('view-home').style.display='block';
+  }else if(tab==='map'){
+    document.getElementById('view-map').style.display='flex';
     renderMapTab();
-  } else if(tab === 'fav'){
-    document.getElementById('view-fav').style.display = 'flex';
+  }else if(tab==='fav'){
+    document.getElementById('view-fav').style.display='flex';
     renderFav();
-  } else if(tab === 'bell'){
-    document.getElementById('view-bell').style.display = 'flex';
+  }else if(tab==='bell'){
+    document.getElementById('view-bell').style.display='flex';
   }
 }
 
@@ -601,6 +568,3 @@ setArea('池尻大橋');
 </script>
 </body>
 </html>
-HTMLEOF
-echo "done"
-出力
