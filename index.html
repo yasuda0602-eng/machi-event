@@ -94,7 +94,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
       </div>
       <button class="search-btn" onclick="doSearch()">検索</button>
     </div>
-    <div class="chips">
+    <div class="chips" id="area-chips" style="touch-action:pan-x;">
       <span class="chip" onclick="setArea('池尻大橋')">📍 池尻大橋</span>
       <span class="chip" onclick="setArea('三軒茶屋')">三軒茶屋</span>
       <span class="chip" onclick="setArea('恵比寿')">恵比寿</span>
@@ -182,6 +182,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
       <div class="modal-info-row">
         <div class="modal-info-icon" style="background:#FAEEDA"><i class="ti ti-ticket" style="color:#BA7517;font-size:18px"></i></div>
         <div><div class="modal-info-label">料金</div><div class="modal-info-value" id="modal-free"></div></div>
+      </div>
+      <!-- 周辺のお店 -->
+      <div style="margin-top:20px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-tools-kitchen-2" style="color:#1D9E75;"></i> 周辺のお店
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="nearby-shop-btns"></div>
       </div>
       <div class="modal-actions">
         <button class="btn-map" onclick="openMap()"><i class="ti ti-map-2"></i> Googleマップで見る</button>
@@ -405,6 +412,7 @@ function openModal(ev){
   const btn=document.getElementById('btn-bell');
   btn.className='btn-bell';
   btn.innerHTML='<i class="ti ti-bell"></i> 通知を受け取る';
+  renderNearbyShops(ev.place);
   document.getElementById('modal').classList.add('open');
 }
 
@@ -430,6 +438,78 @@ function shareEvent(){
 }
 
 document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+
+// ===== スワイプで隣の街に移動 =====
+const AREA_ORDER=['池尻大橋','三軒茶屋','恵比寿','中目黒','渋谷','新宿','下北沢','吉祥寺','自由が丘','横浜','浅草','代々木公園','駒沢公園'];
+let touchStartX=0, touchStartY=0;
+document.getElementById('view-home').addEventListener('touchstart',e=>{
+  touchStartX=e.touches[0].clientX;
+  touchStartY=e.touches[0].clientY;
+},{passive:true});
+document.getElementById('view-home').addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchStartX;
+  const dy=e.changedTouches[0].clientY-touchStartY;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){
+    const idx=AREA_ORDER.indexOf(currentArea);
+    if(dx<0&&idx<AREA_ORDER.length-1) setArea(AREA_ORDER[idx+1]);
+    else if(dx>0&&idx>0) setArea(AREA_ORDER[idx-1]);
+  }
+},{passive:true});
+
+// ===== タブ長押しで並び替え =====
+let dragChip=null, dragIdx=-1, chipOrder=[...AREA_ORDER];
+function initChipDrag(){
+  const chips=document.querySelectorAll('#area-chips .chip');
+  chips.forEach((chip,i)=>{
+    chip.setAttribute('draggable','true');
+    let longPressTimer=null;
+    chip.addEventListener('touchstart',e=>{
+      longPressTimer=setTimeout(()=>{
+        chip.style.opacity='0.5';
+        chip.style.transform='scale(1.05)';
+        dragChip=chip;
+        dragIdx=i;
+      },500);
+    },{passive:true});
+    chip.addEventListener('touchend',e=>{
+      clearTimeout(longPressTimer);
+      if(dragChip){
+        dragChip.style.opacity='1';
+        dragChip.style.transform='scale(1)';
+        dragChip=null;
+      }
+    },{passive:true});
+    chip.addEventListener('touchmove',e=>{
+      clearTimeout(longPressTimer);
+      if(!dragChip)return;
+      const touch=e.touches[0];
+      const el=document.elementFromPoint(touch.clientX,touch.clientY);
+      if(el&&el.classList.contains('chip')&&el!==dragChip){
+        const parent=el.parentNode;
+        const chipsArr=[...parent.children];
+        const targetIdx=chipsArr.indexOf(el);
+        const srcIdx=chipsArr.indexOf(dragChip);
+        if(targetIdx>srcIdx) parent.insertBefore(dragChip,el.nextSibling);
+        else parent.insertBefore(dragChip,el);
+      }
+    },{passive:true});
+  });
+}
+
+// ===== 周辺のお店ボタン =====
+function renderNearbyShops(place){
+  const q=encodeURIComponent(place);
+  const shops=[
+    {label:'☕ カフェ',query:q+'%20カフェ'},
+    {label:'🍽 ランチ',query:q+'%20ランチ'},
+    {label:'🍷 ディナー',query:q+'%20ディナー'},
+    {label:'🍣 1人OK',query:q+'%20一人%20ディナー'},
+    {label:'🍺 バー',query:q+'%20バー'},
+  ];
+  document.getElementById('nearby-shop-btns').innerHTML=shops.map(s=>`
+    <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=${s.query}','_blank')" style="padding:7px 12px;border-radius:99px;border:0.5px solid #ddd;font-size:12px;cursor:pointer;background:#F5F5F5;color:#333;white-space:nowrap;">${s.label}</button>
+  `).join('');
+}
 
 // お気に入り管理
 let favorites = JSON.parse(localStorage.getItem('machi-favorites')||'[]');
@@ -565,6 +645,7 @@ function switchTab(tab){
 }
 
 setArea('池尻大橋');
+initChipDrag();
 </script>
 </body>
 </html>
