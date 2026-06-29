@@ -49,6 +49,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
 .date-month{font-size:10px;color:#666;}
 .date-day{font-size:22px;font-weight:600;line-height:1.1;}
 .date-dow{font-size:10px;color:#999;}
+.date-range{font-size:9px;color:#1D9E75;font-weight:600;margin-top:2px;}
 .card-info{flex:1;min-width:0;}
 .card-name{font-size:14px;font-weight:600;margin-bottom:3px;line-height:1.3;}
 .card-place{font-size:12px;color:#666;display:flex;align-items:center;gap:4px;margin-bottom:6px;}
@@ -238,6 +239,29 @@ const DAYS=["日","月","火","水","木","金","土"];
 const TODAY=new Date(); TODAY.setHours(0,0,0,0);
 const AREA_ORDER=['池尻大橋','三軒茶屋','恵比寿','中目黒','渋谷','新宿','下北沢','吉祥寺','自由が丘','横浜','浅草','代々木公園','駒沢公園'];
 
+// 期間表示ヘルパー
+function formatDateRange(ev){
+  const dt=new Date(ev.date);
+  const m=MONTHS[dt.getMonth()];
+  const d=dt.getDate();
+  const dow=DAYS[dt.getDay()];
+  if(!ev.dateEnd) return `${m}${d}日（${dow}曜日）`;
+  const dt2=new Date(ev.dateEnd);
+  const m2=MONTHS[dt2.getMonth()];
+  const d2=dt2.getDate();
+  const dow2=DAYS[dt2.getDay()];
+  if(dt.getMonth()===dt2.getMonth()) return `${m}${d}日（${dow}）〜${d2}日（${dow2}）`;
+  return `${m}${d}日（${dow}）〜${m2}${d2}日（${dow2}）`;
+}
+
+function formatDateShort(ev){
+  const dt=new Date(ev.date);
+  if(!ev.dateEnd) return null;
+  const dt2=new Date(ev.dateEnd);
+  if(dt.getMonth()===dt2.getMonth()) return `${dt.getDate()}〜${dt2.getDate()}日`;
+  return `${MONTHS[dt.getMonth()]}${dt.getDate()}〜${MONTHS[dt2.getMonth()]}${dt2.getDate()}日`;
+}
+
 const DB={
   "池尻大橋":[
     {name:"目黒川アートマルシェ",date:"2026-06-28",place:"目黒川沿い 池尻橋付近",dist:"0.4km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
@@ -298,8 +322,6 @@ const DB={
     {name:"渋谷音楽フェス",date:"2026-09-13",place:"渋谷各所",dist:"0.2km",cat:"音楽",free:false,color:"#0F6E56"},
     {name:"代々木公園マルシェ",date:"2026-06-14",place:"代々木公園",dist:"1.5km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
     {name:"渋谷アートフェスティバル",date:"2026-08-22",place:"渋谷ヒカリエ周辺",dist:"0.4km",cat:"映画・アート",free:true,color:"#BA7517"},
-    {name:"渋谷ハロウィンフェス",date:"2026-10-31",place:"渋谷センター街周辺",dist:"0.3km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
-    {name:"渋谷音楽フェス",date:"2026-09-13",place:"渋谷各所",dist:"0.2km",cat:"音楽",free:false,color:"#0F6E56"},
   ],
   "自由が丘":[
     {name:"自由が丘スイーツフェスタ",date:"2026-09-19",place:"自由が丘駅前",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
@@ -360,13 +382,18 @@ const DB={
     {name:"駒沢公園ハロウィンラン",date:"2026-10-25",place:"駒沢オリンピック公園",dist:"0.1km",cat:"スポーツ・自然",free:false,color:"#185FA5"},
   ],
   "代々木公園":[
-    {name:"LOVE FOR NOTO 2026",date:"2026-06-27",place:"代々木公園イベント広場",dist:"0.1km",cat:"音楽",free:true,color:"#0F6E56"},
-    {name:"星と太陽のマーケット",date:"2026-07-01",place:"代々木公園ケヤキ並木",dist:"0.1km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
-    {name:"ブラジル＆ラテンフェスティバル2026",date:"2026-07-18",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
-    {name:"東京ナイトマーケット",date:"2026-10-21",place:"代々木公園",dist:"0.1km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
-    {name:"アースガーデン 秋 2026",date:"2026-10-24",place:"代々木公園イベント広場",dist:"0.1km",cat:"スポーツ・自然",free:true,color:"#185FA5"},
-    {name:"カリブ・ラテンアメリカストリート代々木2026",date:"2026-10-17",place:"代々木公園",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
-    {name:"東京雪祭2026",date:"2026-10-31",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"LOVE FOR NOTO 2026",date:"2026-06-27",dateEnd:"2026-06-28",place:"代々木公園イベント広場",dist:"0.1km",cat:"音楽",free:true,color:"#0F6E56"},
+    {name:"星と太陽のマーケット",date:"2026-07-01",dateEnd:"2026-07-05",place:"代々木公園ケヤキ並木",dist:"0.1km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
+    {name:"アースガーデン 夏 ヨルイチ 2026",date:"2026-07-03",dateEnd:"2026-07-05",place:"代々木公園イベント広場",dist:"0.1km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
+    {name:"ブラジル＆ラテンフェスティバル2026",date:"2026-07-18",dateEnd:"2026-07-19",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"タイフェア in 東京2026",date:"2026-08-15",dateEnd:"2026-08-16",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"原宿表参道元氣祭スーパーよさこい 2026",date:"2026-08-29",dateEnd:"2026-08-30",place:"原宿表参道・代々木公園・NHK前ケヤキ並木",dist:"0.3km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"ナマステ・インディア2026",date:"2026-09-26",dateEnd:"2026-09-27",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"第17回 九州観光・物産フェア in 代々木2026",date:"2026-10-09",dateEnd:"2026-10-12",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"カリブ・ラテンアメリカストリート代々木2026",date:"2026-10-17",dateEnd:"2026-10-18",place:"代々木公園",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
+    {name:"東京ナイトマーケット",date:"2026-10-21",dateEnd:"2026-10-25",place:"代々木公園",dist:"0.1km",cat:"マルシェ・蚤の市",free:true,color:"#534AB7"},
+    {name:"アースガーデン 秋 2026",date:"2026-10-24",dateEnd:"2026-10-25",place:"代々木公園イベント広場",dist:"0.1km",cat:"スポーツ・自然",free:true,color:"#185FA5"},
+    {name:"東京雪祭2026",date:"2026-10-31",dateEnd:"2026-11-01",place:"代々木公園イベント広場",dist:"0.1km",cat:"お祭り・縁日",free:true,color:"#E24B4A"},
     {name:"神宮外苑花火大会",date:"2026-08-22",place:"神宮外苑",dist:"1.5km",cat:"お祭り・縁日",free:false,color:"#E24B4A"},
   ],
 };
@@ -392,7 +419,6 @@ function daysUntil(d){const dt=new Date(d);dt.setHours(0,0,0,0);return Math.roun
 function setArea(a){
   currentArea=a;
   document.getElementById('search-input').value=a;
-  // チップのアクティブ状態更新
   document.querySelectorAll('#area-chips .chip').forEach(c=>{
     c.classList.toggle('active-chip', c.textContent.replace('📍 ','')===a);
   });
@@ -400,7 +426,6 @@ function setArea(a){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.filter-btn')[0].classList.add('active');
   render();
-  // チップを中央にスクロール
   const chips=document.getElementById('area-chips');
   const activeChip=document.querySelector('#area-chips .chip.active-chip');
   if(activeChip) chips.scrollLeft=activeChip.offsetLeft-chips.offsetWidth/2+activeChip.offsetWidth/2;
@@ -434,6 +459,7 @@ function render(){
   document.getElementById('cards').innerHTML=filtered.length?filtered.map(ev=>{
     const dt=new Date(ev.date);
     const days=daysUntil(ev.date);
+    const rangeLabel=ev.dateEnd?`<div class="date-range">${formatDateShort(ev)}</div>`:'';
     return `<div class="card" onclick="openModal(${JSON.stringify(ev).replace(/"/g,'&quot;')})">
       <div class="card-accent" style="background:${ev.color}"></div>
       <div class="card-body">
@@ -441,6 +467,7 @@ function render(){
           <div class="date-month">${MONTHS[dt.getMonth()]}</div>
           <div class="date-day">${dt.getDate()}</div>
           <div class="date-dow">${DAYS[dt.getDay()]}曜</div>
+          ${rangeLabel}
         </div>
         <div class="card-info">
           <div class="card-name">${ev.name}</div>
@@ -464,17 +491,15 @@ function render(){
 // ===== モーダル =====
 function openModal(ev){
   currentEvent=ev;
-  const dt=new Date(ev.date);
   document.getElementById('modal-accent').style.background=ev.color;
   document.getElementById('modal-cat').innerHTML=`<i class="ti ti-tag"></i> ${ev.cat}`;
   document.getElementById('modal-title').textContent=ev.name;
-  document.getElementById('modal-date').textContent=`${MONTHS[dt.getMonth()]}${dt.getDate()}日（${DAYS[dt.getDay()]}曜日）`;
+  document.getElementById('modal-date').textContent=formatDateRange(ev);
   document.getElementById('modal-place').textContent=ev.place;
   document.getElementById('modal-dist').textContent=`現在地から約${ev.dist}`;
   document.getElementById('modal-free').textContent=ev.free?'無料':'有料';
   document.getElementById('btn-bell').className='btn-bell';
   document.getElementById('btn-bell').innerHTML='<i class="ti ti-bell"></i> 通知を受け取る';
-  // 周辺のお店
   const place=encodeURIComponent(ev.place);
   const shops=[
     {label:'☕ カフェ',q:place+'%20カフェ'},
@@ -500,8 +525,8 @@ function toggleBell(){
 
 function shareEvent(){
   if(!currentEvent)return;
-  const dt=new Date(currentEvent.date);
-  const text=`【${currentEvent.name}】\n📅 ${MONTHS[dt.getMonth()]}${dt.getDate()}日\n📍 ${currentEvent.place}\n${currentEvent.free?'入場無料':'有料'}\n\n#まちイベント`;
+  const dateStr=formatDateRange(currentEvent);
+  const text=`【${currentEvent.name}】\n📅 ${dateStr}\n📍 ${currentEvent.place}\n${currentEvent.free?'入場無料':'有料'}\n\n#まちイベント`;
   if(navigator.share)navigator.share({title:currentEvent.name,text});
   else navigator.clipboard.writeText(text).then(()=>alert('コピーしました！'));
 }
@@ -525,10 +550,11 @@ function renderFav(){
 
 function favCard(ev,ended=false){
   const dt=new Date(ev.date);
+  const rangeLabel=ev.dateEnd?`<div class="date-range">${formatDateShort(ev)}</div>`:'';
   return `<div class="card" style="${ended?'opacity:0.5':''}" onclick="openModal(${JSON.stringify(ev).replace(/"/g,'&quot;')})">
     <div class="card-accent" style="background:${ev.color}"></div>
     <div class="card-body">
-      <div class="card-date"><div class="date-month">${MONTHS[dt.getMonth()]}</div><div class="date-day">${dt.getDate()}</div><div class="date-dow">${DAYS[dt.getDay()]}曜</div></div>
+      <div class="card-date"><div class="date-month">${MONTHS[dt.getMonth()]}</div><div class="date-day">${dt.getDate()}</div><div class="date-dow">${DAYS[dt.getDay()]}曜</div>${rangeLabel}</div>
       <div class="card-info">
         <div class="card-name">${ev.name}</div>
         <div class="card-place"><i class="ti ti-map-pin" style="font-size:12px"></i>${ev.place}</div>
@@ -554,11 +580,12 @@ function renderMap(){
   const unique=all.filter(e=>{const k=e.name+e.date;if(seen.has(k))return false;seen.add(k);return true;});
   document.getElementById('map-event-list').innerHTML=unique.map(ev=>{
     const dt=new Date(ev.date);
+    const rangeLabel=ev.dateEnd?`<div class="date-range">${formatDateShort(ev)}</div>`:'';
     const q=encodeURIComponent(ev.place+' '+ev.name);
     return `<div class="card" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${q}','_blank')">
       <div class="card-accent" style="background:${ev.color}"></div>
       <div class="card-body">
-        <div class="card-date"><div class="date-month">${MONTHS[dt.getMonth()]}</div><div class="date-day">${dt.getDate()}</div><div class="date-dow">${DAYS[dt.getDay()]}曜</div></div>
+        <div class="card-date"><div class="date-month">${MONTHS[dt.getMonth()]}</div><div class="date-day">${dt.getDate()}</div><div class="date-dow">${DAYS[dt.getDay()]}曜</div>${rangeLabel}</div>
         <div class="card-info">
           <div class="card-name">${ev.name}</div>
           <div class="card-place"><i class="ti ti-map-pin" style="font-size:12px"></i>${ev.place}</div>
@@ -602,7 +629,7 @@ document.getElementById('home-scroll').addEventListener('touchend',e=>{
 },{passive:true});
 
 // ===== チップ長押しで並び替え =====
-let dragEl=null, dragOverEl=null;
+let dragEl=null;
 function initDrag(){
   document.querySelectorAll('#area-chips .chip').forEach(chip=>{
     let timer=null;
