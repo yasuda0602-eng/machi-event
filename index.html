@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="まちイベント">
 <meta name="theme-color" content="#1D9E75">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
 <title>まちイベント</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
@@ -663,6 +665,15 @@ function initDrag(){
 document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
 setArea('池尻大橋');
 initDrag();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').then(reg=>{
+      // アプリを開くたびに新しいバージョンがないか確認する
+      reg.update();
+    });
+  });
+}
 </script>
 </body>
 </html>
