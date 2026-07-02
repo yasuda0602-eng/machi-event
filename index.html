@@ -503,12 +503,15 @@ function openModal(ev){
   document.getElementById('btn-bell').className='btn-bell';
   document.getElementById('btn-bell').innerHTML='<i class="ti ti-bell"></i> 通知を受け取る';
   const place=encodeURIComponent(ev.place);
+  // 公園・河川敷・境内など、バーがほぼ無いと想定されるエリアではバーの選択肢を出さない
+  const noBarKeywords=['河川敷','境内','自然文化園','恩賜公園','沿岸'];
+  const hideBar=noBarKeywords.some(k=>ev.place.includes(k));
   const shops=[
     {label:'☕ カフェ',q:place+'%20カフェ'},
     {label:'🍽 ランチ',q:place+'%20ランチ'},
     {label:'🍷 ディナー',q:place+'%20ディナー'},
     {label:'🍣 一人OK',q:place+'%20一人%20ディナー'},
-    {label:'🍺 バー',q:place+'%20バー'},
+    ...(hideBar?[]:[{label:'🍺 バー',q:place+'%20バー'}]),
   ];
   document.getElementById('shop-btns').innerHTML=shops.map(s=>`<button class="shop-btn" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${s.q}','_blank')">${s.label}</button>`).join('');
   document.getElementById('modal').classList.add('open');
