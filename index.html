@@ -145,12 +145,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
   </div>
 </div>
 
-<!-- 地図ビュー -->
+<!-- すべてビュー -->
 <div class="view" id="view-map">
   <div class="view-header">
     <div class="view-header-row">
       <button class="back-btn" onclick="showTab('home')"><i class="ti ti-arrow-left"></i></button>
-      <span class="view-title">地図で見る</span>
+      <span class="view-title">すべてのイベント</span>
     </div>
   </div>
   <div class="scroll-area">
@@ -189,7 +189,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
 <!-- タブバー -->
 <div class="tab-bar">
   <div class="tab-item active" id="tab-home" onclick="showTab('home')"><i class="ti ti-home"></i>ホーム</div>
-  <div class="tab-item" id="tab-map" onclick="showTab('map')"><i class="ti ti-map"></i>地図</div>
+  <div class="tab-item" id="tab-map" onclick="showTab('map')"><i class="ti ti-list"></i>すべて</div>
   <div class="tab-item" id="tab-bell" onclick="showTab('bell')"><i class="ti ti-bell"></i>通知</div>
   <div class="tab-item" id="tab-fav" onclick="showTab('fav')"><i class="ti ti-heart"></i>お気に入り</div>
 </div>
@@ -578,7 +578,7 @@ function removeFav(ev){
   renderFav();
 }
 
-// ===== 地図 =====
+// ===== すべて =====
 function renderMap(){
   const all=Object.values(DB).flat().filter(e=>daysUntil(e.date)>=0).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const seen=new Set();
