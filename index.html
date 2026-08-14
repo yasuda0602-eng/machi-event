@@ -116,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
       <button class="search-btn" onclick="doSearch()">検索</button>
     </div>
     <div class="chips" id="area-chips">
-      <span class="chip active-chip" onclick="setArea('池尻大橋')">📍 池尻大橋</span>
+      <span class="chip active-chip" onclick="setArea('池尻大橋')">池尻大橋</span>
       <span class="chip" onclick="setArea('三軒茶屋')">三軒茶屋</span>
       <span class="chip" onclick="setArea('恵比寿')">恵比寿</span>
       <span class="chip" onclick="setArea('中目黒')">中目黒</span>
@@ -415,6 +415,7 @@ function showTab(tab){
   });
   document.getElementById('view-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='home') setArea(AREA_ORDER[0]);
   if(tab==='map') renderMap();
   if(tab==='fav') renderFav();
 }
