@@ -415,7 +415,10 @@ function showTab(tab){
   });
   document.getElementById('view-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
-  if(tab==='home') setArea(AREA_ORDER[0]);
+  if(tab==='home'){
+    const firstChip=document.querySelector('#area-chips .chip');
+    if(firstChip) setArea(firstChip.textContent.trim());
+  }
   if(tab==='map') renderMap();
   if(tab==='fav') renderFav();
 }
@@ -665,13 +668,32 @@ function initDrag(){
     },{passive:false});
     chip.addEventListener('touchend',e=>{
       clearTimeout(timer);
-      if(dragEl){dragEl.classList.remove('dragging');dragEl=null;}
+      if(dragEl){
+        dragEl.classList.remove('dragging');
+        dragEl=null;
+        saveChipOrder();
+      }
     },{passive:true});
   });
 }
 
+function saveChipOrder(){
+  const order=[...document.querySelectorAll('#area-chips .chip')].map(c=>c.textContent.trim());
+  localStorage.setItem('machi-area-order',JSON.stringify(order));
+}
+
+function restoreChipOrder(){
+  const saved=JSON.parse(localStorage.getItem('machi-area-order')||'null');
+  if(!saved)return;
+  const chips=document.getElementById('area-chips');
+  const chipMap={};
+  [...chips.children].forEach(c=>{chipMap[c.textContent.trim()]=c;});
+  saved.forEach(name=>{if(chipMap[name])chips.appendChild(chipMap[name]);});
+}
+
 document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
-setArea('池尻大橋');
+restoreChipOrder();
+setArea((document.querySelector('#area-chips .chip')||{}).textContent?.trim()||'池尻大橋');
 initDrag();
 
 if('serviceWorker' in navigator){
