@@ -2,7 +2,7 @@
 // 方針：HTML(アプリ本体)は常にネットワークから最新版を取りに行く（ネットワーク優先）。
 // 取得できた場合はキャッシュを更新し、オフライン時のみキャッシュから返す。
 // アイコン等の静的ファイルはキャッシュ優先で高速表示。
-const CACHE_NAME = 'machi-event-cache-v1';
+const CACHE_NAME = 'machi-event-cache-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -35,7 +35,7 @@ self.addEventListener('fetch', (event) => {
   if (isHTML) {
     // ネットワーク優先：最新のHTMLを常に取得しにいく
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-store' })
         .then((res) => {
           const resClone = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
